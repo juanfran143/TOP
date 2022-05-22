@@ -28,6 +28,23 @@ class simheuristic:
 
         # route.reliability = fail/self.simulations
 
+    def fast_simulation(self, route, max_dist, of):
+
+        fail = 0
+        for _ in range(self.simulations):
+            first = True
+            distance = 0
+            for edge in route.edges:
+                distance += self.lognormal_simuation(edge.distance)
+                if distance > max_dist:
+                    if first:
+                        first = False
+                        fail += 1
+                        route.stochastic_of.append(0)
+            if first:
+                route.stochastic_of.append(of)
+
+        route.reliability = fail/self.simulations
 
 
     def lognormal_simuation(self, mean):
