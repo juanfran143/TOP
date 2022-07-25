@@ -6,7 +6,7 @@ from sim import simheuristic
 import numpy as np
 import time
 import sys
-
+import pandas as pd
 class solution:
 
     def __init__(self, nodes, max_dist, max_vehicles = 1,alpha = 0.7):
@@ -134,7 +134,7 @@ class solution:
             new_route, new_sol = self.simheuristic_algorithm(simheuristic)
             if best_of < new_sol:
                 best_of = new_sol
-                best_route = copy.deepcopy(new_route)
+                best_route = new_route.copy()
 
         self.routes = best_route
 
@@ -201,7 +201,58 @@ class solution:
                     text = text[:-1] + "\n"
                     f.write(text)
 
+            else:
+                # Si hacemos el merge, vemos cuanto mejoramos
+                node_merged = selected_saving.end.id
+
+                with open('data.txt', 'a') as f:
+                    route = route_a
+                    selected_nodes = [(edge.end.id, i+1) for i, edge in enumerate(route.edges[:-1])]
+                    selected = [i[0] for i in selected_nodes]
+                    text = ""
+                    for k in range(len(self.nodes)-2):
+                        if (k+1) in selected:
+                            text += str([i[1] for i in selected_nodes if i[0] == (k+1)][0]) + ";"
+                        else:
+                            text += "0;"
+
+                    for k in range(len(self.nodes)-2):
+                        if (k+1) == node_merged:
+                            text += "-10;"
+                        else:
+                            text += "0;"
+
+                    text = text[:-1] + "\n"
+                    f.write(text)
+
         #return self.routes, self.of
+
+    def Qselect_saving(self, df, random = 2):
+        #
+        for i in self.savings[:random]:
+            pass
+
+        return self.savings.pop(rnd.randint(0, min([random, len(self.savings)-1])))
+
+    def Qsimheuristic_algorithm2(self, simheuristico: simheuristic, df):
+        self.dummy_solution()
+        self.create_saving_list()
+        while len(self.savings) != 0:
+            self.Qselect_saving(df)
+            self.merge_routes()
+
+        self.routes.sort(key=lambda x: x.reward, reverse=True)
+        self.of = sum([self.routes[i].reward for i in range(self.max_vehicles)])
+
+        simheuristico.simulation(self)
+        self.routes.sort(key=lambda x: np.mean(x.stochastic_of), reverse=True)
+        self.of = sum([np.mean(self.routes[i].stochastic_of) for i in range(self.max_vehicles)])
+
+        #print(self.of)
+        #for i in self.routes:
+        #    print(i.__str__())
+
+        return self.routes, self.of
 
     def Qsimheuristic_multi_start(self, max_time_data, max_time_algo, simheuristic: simheuristic):
         start = time.time()
@@ -209,5 +260,27 @@ class solution:
         while time.time() - start <= max_time_data:
             self.reset()
             self.Qsimheuristic_algorithm(simheuristic)
+
+        df = pd.read_table("data.txt", sep=";", header=None)
+
+        df2 = df.loc[df[4] != 0, [0, 1, 2, 3, 4]]
+        df2 = df2.groupby([0, 1, 2, 3]).mean().reset_index()
+
+        df3 = df.loc[df[5] != 0, [0, 1, 2, 3, 5]]
+        df3 = df3.groupby([0, 1, 2, 3]).mean().reset_index()
+
+        df4 = df.loc[df[6] != 0, [0, 1, 2, 3, 6]]
+        df4 = df4.groupby([0, 1, 2, 3]).mean().reset_index()
+
+        df5 = df.loc[df[7] != 0, [0, 1, 2, 3, 7]]
+        df5 = df5.groupby([0, 1, 2, 3]).mean().reset_index()
+
+        a = pd.merge(df2, df3, on=[0, 1, 2, 3], how='outer')
+        a = pd.merge(a, df4, on=[0, 1, 2, 3], how='outer')
+        a = pd.merge(a, df5, on=[0, 1, 2, 3], how='outer')
+        a = a.fillna(0)
+
+        while time.time() - start <= max_time_data:
+            self.reset()
 
 

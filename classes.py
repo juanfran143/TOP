@@ -48,6 +48,13 @@ class route:
 
         self.edges = edges
 
+    def copy_edges(self):
+        edges = []
+        for i in self.edges:
+            edges.append(i)
+
+        return edges
+
     def __str__(self):
         text = str(self.edges[0].start) + "-"
         for i in self.edges[:-1]:

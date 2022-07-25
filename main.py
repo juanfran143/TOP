@@ -49,8 +49,8 @@ def Qsimheuristic_approach(max_time):
 
     solution1 = solution(nodes, 10)
     short_simulations = simheuristic(10, 0.5)
-    solution1.Qsimheuristic_multi_start(max_time, 20, short_simulations)
-
+    #solution1.Qsimheuristic_multi_start(max_time, 20, short_simulations)
+    solution1.simheuristic_multi_start(30, short_simulations)
 
 if __name__ == '__main__':
     Qsimheuristic_approach(10)
