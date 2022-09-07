@@ -1,0 +1,9 @@
+The team orienteering problem (TOP) is an NP-hard optimization problem with an increasing number of potential
+applications in smart cities, humanitarian logistics, wildfire surveillance, etc. In the TOP, a fixed fleet of vehicles
+is employed to obtain rewards by visiting nodes in a network. All vehicles share common origin and destination
+locations. Since each vehicle has a limitation in time or traveling distance, not all nodes in the network can be
+visited. Hence, the goal is focused on the maximization of the collected reward, taking into account the aforemen-
+tioned constraints (Solving the Stochastic Team Orienteering Problem: Comparing
+Simheuristics with the Sample Average Approximation Method, Javier Panadero et al.)
+
+In this paper we have tried to solve the TOP problem where the dispatch times are stochastic. The way to solve this problem has been through a simheuristic algorithm, able to check how stochasticity affects the problem. As an innovative point, we are trying to introduce Reinforcement Learning to the algorithm, making it learn as it has more data.
